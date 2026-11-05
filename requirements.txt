@@ -1,0 +1,9 @@
+streamlit==1.64.0
+chromadb==1.5.9
+sentence-transformers==6.1.0
+openai==3.17.0
+python-dotenv==1.2.3
+langchain-core==1.7.1
+langchain-openai==1.7.3
+beautifulsoup4==4.15.0
+requests

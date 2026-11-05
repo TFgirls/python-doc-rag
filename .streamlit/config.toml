@@ -1,0 +1,10 @@
+[client]
+toolbarMode = "minimal"
+showErrorDetails = false
+
+[browser]
+gatherUsageStats = false
+
+[server]
+# 禁用文件观察器，避免 transformers 视觉子模块的无关告警刷屏
+fileWatcherType = "none"

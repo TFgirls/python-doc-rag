@@ -1,0 +1,21 @@
+# 虚拟环境与依赖
+.venv/
+venv/
+
+# 向量库（含 sqlite 与向量数据，体积大且不入库）
+db/
+
+# 上传临时目录
+data/
+
+# 日志
+*.log
+
+# 密钥（切勿入库）
+.env
+
+# IDE
+.idea/
+
+# Python 缓存
+__pycache__/
