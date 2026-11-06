@@ -18,15 +18,39 @@ with st.sidebar:
             n = ingest_preset()
         st.success(f"预置知识库完成，共 {n} 个文本片段")
 
-    up = st.file_uploader("➕ 上传额外增量入库", type=["txt"])
+    # 上传成功后要清空选择框，避免用户误以为没生效而重复点击（重复入库会产生重复内容）。
+    # Streamlit 的 file_uploader 不能直接 reset，靠切换 key 强制重建组件。
+    if "uploader_seq" not in st.session_state:
+        st.session_state.uploader_seq = 0
+    pending = st.session_state.pop("upload_msg", None)
+    if pending:
+        (st.success if pending[0] == "success" else st.warning)(pending[1])
+
+    up = st.file_uploader(
+        "➕ 上传额外增量入库",
+        type=["txt"],
+        key=f"uploader_{st.session_state.uploader_seq}",
+    )
     if up is not None:
         if st.button("加入知识库", use_container_width=True):
-            with st.spinner("解析并入库..."):
-                m = ingest_upload(up.getvalue(), up.name)
-            if m == 0:
-                st.warning(f"未入库任何片段：{up.name}（可能是扫描件/无文字层/空文件，已跳过）")
+            try:
+                with st.spinner("解析并入库..."):
+                    m = ingest_upload(up.getvalue(), up.name)
+            except ValueError as e:  # 编码无法识别：给出可读提示，而不是整页 traceback
+                st.error(f"入库失败：{e}")
             else:
-                st.success(f"已入库 {m} 个片段：{up.name}")
+                if m == 0:
+                    st.session_state.upload_msg = (
+                        "warning",
+                        f"未入库任何片段：{up.name}（可能是空文件，已跳过）",
+                    )
+                else:
+                    st.session_state.upload_msg = (
+                        "success",
+                        f"已入库 {m} 个片段：{up.name}",
+                    )
+                st.session_state.uploader_seq += 1  # 换 key -> 清空选择框
+                st.rerun()
 
 query = st.text_input("输入问题，例如：类和对象怎么定义？怎么读写文件？怎么处理异常？")
 if st.button("提问", use_container_width=True) and query:

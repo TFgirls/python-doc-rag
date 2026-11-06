@@ -19,3 +19,4 @@ data/
 
 # Python 缓存
 __pycache__/
+.pytest_cache/

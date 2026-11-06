@@ -6,4 +6,4 @@ python-dotenv==1.2.3
 langchain-core==1.7.1
 langchain-openai==1.7.3
 beautifulsoup4==4.15.0
-requests
+requests==2.34.2

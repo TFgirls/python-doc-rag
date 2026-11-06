@@ -7,15 +7,39 @@ from .chunk import split_text
 from .embed import get_embedding_function
 
 
+# 上传文件的常见编码，按优先级尝试：
+#   utf-8-sig 先切掉 Windows 记事本加的 BOM；
+#   gb18030 是 GBK/GB2312 的超集，能覆盖国内用户直接用记事本存的 txt。
+_ENCODINGS = ("utf-8-sig", "utf-8", "gb18030")
+
+
+def _decode_bytes(data: bytes) -> str:
+    """按候选编码依次尝试解码，全失败时抛带可读信息的 ValueError。
+
+    不直接 .decode("utf-8")：用户传一个 GBK 存的 txt 会抛 UnicodeDecodeError，
+    而上传路径没有兜底，异常会直接冒到 Streamlit 变成整页报错。
+    """
+    for enc in _ENCODINGS:
+        try:
+            return data.decode(enc)
+        except UnicodeDecodeError:
+            continue
+    raise ValueError(
+        f"无法识别文件编码（已尝试 {'/'.join(_ENCODINGS)}）。"
+        "请将文件另存为 UTF-8 后重试。"
+    )
+
+
 def _read_text(source):
     """读取一个 .txt 源，返回全文（str）。
 
     source 可为路径/Path（预置），或 BytesIO（上传）。
+    上传的字节流按 ``_decode_bytes`` 的多编码策略解码。
     """
-    if hasattr(source, "read"):  # BytesIO（上传）：读字节后按 UTF-8 解码
+    if hasattr(source, "read"):  # BytesIO（上传）
         data = source.read()
         if isinstance(data, bytes):
-            data = data.decode("utf-8")
+            data = _decode_bytes(data)
         return data
     with open(source, encoding="utf-8") as f:
         return f.read()

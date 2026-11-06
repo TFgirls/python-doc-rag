@@ -26,7 +26,10 @@ def split_text(text, size=600, overlap=100):
         return []
 
     # 断句（句末标点/换行后断开，标点留在前半句）
-    sentences = [s.strip() for s in _SENT_RE.split(text) if s.strip()]
+    # 这里用 rstrip 而不是 strip：只去掉行尾空白，保留行首缩进。
+    # 若用 strip，Python 代码块会被彻底压平（def / if / return 全部顶格），
+    # 语义和可读性都被破坏——和本函数"代码块不被压扁"的承诺直接矛盾。
+    sentences = [s.rstrip() for s in _SENT_RE.split(text) if s.strip()]
     if not sentences:
         return []
 

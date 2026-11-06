@@ -6,6 +6,9 @@ from .retriever import retrieve
 REFUSAL = "文档中未找到相关信息。"
 # 模型层拒答的识别标记（generator 的提示词要求它原样回这句）
 _REFUSAL_MARK = "未找到相关信息"
+# 拒答文案本身很短。加长度上限，避免正常长答案里恰好出现这几个字
+# （比如用户问"你是怎么判断文档里没有的"，模型会复述这句话）被误判成拒答。
+_REFUSAL_MAX_LEN = 40
 
 # 英文/专有名词（Redis、Django、MySQL…）；这类词是"库里到底有没有"的最强信号
 _LATIN = re.compile(r"[A-Za-z][A-Za-z0-9_+#.\-]{1,}")
@@ -55,7 +58,8 @@ def answer(query):
         f"[来源:{m['source']}] {d}" for d, m in zip(docs, metas)
     )
     text = generate(query, context)
-    if _REFUSAL_MARK in text:
+    # 只有"短且含拒答标记"才算拒答；长答案即使提到这句话也不当成拒答
+    if len(text.strip()) <= _REFUSAL_MAX_LEN and _REFUSAL_MARK in text:
         return (REFUSAL, [], docs)
     sources = sorted({m["source"] for m in metas})
     return text, sources, docs
