@@ -214,7 +214,7 @@ python-doc-rag/
 
 `venv` / `db` / `.env` / `.idea` / `.pytest_cache` / `*.log` 已在 `.gitignore` 中忽略。
 
- 9. 环境
+ ##9. 环境
 
 | 项 | 版本 |
 | --- | --- |
