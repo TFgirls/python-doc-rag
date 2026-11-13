@@ -47,7 +47,6 @@ Windows 上可以直接双击 `run.bat`（已切 UTF-8 代码页，中文日志�
                                                                     ↑
 提问 → 加检索指令前缀 → 向量检索 Top-5 → 拼 [来源:文件] 上下文 → DeepSeek → 答案 + 来源
 ```
-
 关键参数在 `src/config.py`：`CHUNK_SIZE=600`、`CHUNK_OVERLAP=100`、`TOP_K=5`；向量模型 `BAAI/bge-small-zh-v1.5`（92 MB，本地跑），生成模型 `deepseek-chat`。
 
 ## 4. 两套语料
@@ -205,7 +204,7 @@ python-doc-rag/
 │   ├── ingest.py         读取入库（多编码 / 预置 / 上传）
 │   ├── retriever.py      向量检索（单路 / 多路融合）
 │   ├── rerank.py         CrossEncoder 重排（可选）
-│   ├── query_expand.py   查询扩展（仅 en）
+│   ├── query_expand.py   查询扩展（仅 en） 
 │   ├── fusion.py         RRF 融合
 │   ├── generator.py      DeepSeek 调用
 │   └── rag.py            主流程 + 拒答归一化
