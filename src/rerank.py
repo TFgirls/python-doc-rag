@@ -11,14 +11,12 @@ RERANK_MODEL = "BAAI/bge-reranker-base"
 
 _model = None
 
-
 def get_reranker():
     """CrossEncoder 单例，避免重复加载模型（首次会下载约 1.1GB）。"""
     global _model
     if _model is None:
         _model = CrossEncoder(RERANK_MODEL)
     return _model
-
 
 def rerank(query: str, docs, top_k: int):
     """对候选片段重排，返回保留下来的下标（按相关性从高到低）。

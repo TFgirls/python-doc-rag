@@ -35,7 +35,6 @@ def _force_utf8_console():
         except Exception:
             pass
 
-
 _force_utf8_console()
 
 from src.config import TOP_K, PRESET_DOCS_DIR
